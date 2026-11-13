@@ -16,11 +16,7 @@ jobs:
 
       - name: Create ZIP archive
         run: |
-          if [ -f pack.png ]; then
-            zip -r pack.zip assets pack.mcmeta pack.png
-          else
-            zip -r pack.zip assets pack.mcmeta
-          fi
+          zip -r pack.zip . -x ".git*" ".github*" "README.md"
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
