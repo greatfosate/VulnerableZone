@@ -3,6 +3,8 @@ name: Build Resource Pack
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'pack.zip'
 
 permissions:
   contents: write
@@ -16,11 +18,13 @@ jobs:
 
       - name: Create ZIP archive
         run: |
-          zip -r pack.zip . -x ".git*" ".github*" "README.md"
+          rm -f pack.zip
+          zip -r pack.zip assets pack.mcmeta $([ -f pack.png ] && echo "pack.png")
 
-      - name: Upload to Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: Latest Resource Pack
-          files: pack.zip
+      - name: Commit ZIP to repository
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add pack.zip
+          git commit -m "Update pack.zip" || exit 0
+          git push
